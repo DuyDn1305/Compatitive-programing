@@ -1,0 +1,65 @@
+#include <bits/stdc++.h>
+
+#define fto(i, a, b) for(int i = a; i <= b; ++i)
+#define fdto(i, a, b) for(int i = a; i >= b; --i)
+#define ff first
+#define ss second
+#define ll long long
+#define ull unsigned long long
+#define pii pair<int, int>
+#define pll pair<ll, ll>
+#define mp make_pair
+#define pb push_back
+#define oo 1000000007
+#define OO 1000000000000000007
+
+using namespace std;
+
+int n;
+ll l, cnt;
+bool visit[100005];
+vector <int> a[100005];
+int f[100005];
+
+void bfs() {
+    queue <int> q;
+    q.push(1);
+    f[1] = 0;
+    visit[1] = 1;
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        if (a[u].size() == 1 && visit[a[u][0]]) {
+            l += f[u];
+            ++cnt;
+        }
+        else {
+            fto(i, 0, (int)a[u].size()-1) {
+                int v = a[u][i];
+                if (!visit[v]) {
+                    q.push(v);
+                    visit[v] = 1;
+                    f[v] = f[u]+1;
+                }
+            }
+        }
+    }
+}
+
+int main() {
+    #ifndef ONLINE_JUDGE
+        freopen("codef.inp", "r", stdin);
+        freopen("codef.out", "w", stdout);
+    #endif // ONLINE_JUDGE
+    scanf("%d", &n);
+    fto(i, 1, n-1) {
+        int u, v;
+        scanf("%d%d", &u, &v);
+        a[u].pb(v);
+        a[v].pb(u);
+    }
+    bfs();
+    printf("%.15f\n", l*1.0/cnt);
+    return 0;
+}
+/// 362

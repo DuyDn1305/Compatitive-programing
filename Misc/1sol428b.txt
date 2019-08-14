@@ -1,0 +1,83 @@
+#include <bits/stdc++.h>
+
+#define fto(i, a, b) for(int i = a; i <= b; ++i)
+#define fdto(i, a, b) for(int i = a; i >= b; --i)
+#define ff first
+#define ss second
+#define ll long long
+#define ull unsigned long long
+#define pii pair<int, int>
+#define pll pair<ll, ll>
+#define mp make_pair
+#define pb push_back
+#define oo 1000000007
+#define OO 1000000000000000007
+
+using namespace std;
+
+int n, k;
+int a[100005][10];
+int f[10];
+
+int main() {
+    #ifndef ONLINE_JUDGE
+        freopen("codef.inp", "r", stdin);
+        freopen("codef.out", "w", stdout);
+    #endif // ONLINE_JUDGE
+    scanf("%d%d", &n, &k);
+    int res = 0;
+    fto(i, 1, k) {
+        int x;
+        scanf("%d", &x);
+        n -= x/8;
+        x %= 8;
+        if (x < 7) {
+            ++res;
+            ++f[x];
+        }
+        else --n;
+    }
+    if (res <= n) puts("YES");
+    else {
+        f[4] += f[6]+f[5];
+        f[2] += f[6];
+        f[1] += f[5];
+        fto(i, 1, n) {
+            if (!f[4]) break;
+            fto(j, 3, 6) a[i][j] = 1;
+            --f[4];
+        }
+        fto(i, 1, n) {
+            if (!f[3]) break;
+            if (!a[i][3]) {
+                fto(j, 3, 5) a[i][j] = 1;
+                --f[3];
+            }
+        }
+        f[2] += f[4]*2;
+        f[1] += f[3];
+        fto(i, 1, n) {
+            fto(j, 0, 3) {
+                int x = j*2+1;
+                if (j == 2) continue;
+                if (!a[i][x] && f[2]) {
+                    a[i][x] = a[i][x+1] = 1;
+                    --f[2];
+                }
+            }
+        }
+        fto(i, 1, n) {
+            fto(j, 0, 3) {
+                int x = j*2+1;
+                if (!a[i][x] && f[1]) {
+                    a[i][x] = 1;
+                    --f[1];
+                }
+            }
+        }
+        if (!f[1] && !f[2]) puts("YES");
+        else puts("NO");
+    }
+    return 0;
+}
+/// 362

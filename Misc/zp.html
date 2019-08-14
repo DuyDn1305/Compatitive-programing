@@ -1,0 +1,41 @@
+#include <bits/stdc++.h>
+
+#define fto(i, a, b) for(int i = a; i <= b; ++i)
+#define fdto(i, a, b) for(int i = a; i >= b; --i)
+#define ff first
+#define ss second
+#define ll long long
+#define ull unsigned long long
+#define pii pair<int, int>
+#define pll pair<ll, ll>
+#define mp make_pair
+#define pb push_back
+#define oo 1000000007
+#define OO 1000000000000000007
+
+using namespace std;
+
+
+int main() {
+    #ifndef ONLINE_JUDGE
+        freopen("zp.inp", "r", stdin);
+        freopen("zp.out", "w", stdout);
+    #endif // ONLINE_JUDGE
+    scanf("%d", &k);
+    cin >> a;
+    int n = a.size();
+    a = "!"+a;
+    if (n > (k-1)*26) {
+        int ff[300];
+        fto(i, 'a', 'z') ff[i] = 0;
+        fto(i, 1, n) ++f[a[i]];
+        char ans;
+        fto(i, 'a', 'z') if (f[i] >= k) ans = i;
+        fto(i, 1 , k) printf("%c", ans);
+    }
+    else {
+        /// F(i, k) = j
+    }
+    return 0;
+}
+///12436

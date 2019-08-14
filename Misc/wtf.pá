@@ -1,0 +1,21 @@
+program tinhtong;
+ uses crt;
+  var a,b,c,d,e,f,x,y,z,t,m,n:integer;
+      s:longint;
+   function somu(x,y:integer):integer;
+     var i,j,lt:integer;
+begin
+       lt:=1;
+         for i:=1 to y do
+          lt:=lt*x;
+       somu:=lt;
+
+      end;
+begin
+clrscr;
+writeln('nhap so a,b,c,d,e,f = ');readln(a,b,c,d,e,f);
+writeln('nhap so mu x,y,z,t,m,n = ');readln(x,y,z,t,m,n);
+s:=somu(a,x)+somu(b,y)+somu(c,z)+somu(d,t)+somu(e,m)+somu(f,n);
+   write('tong = ',s);
+readln;
+end.

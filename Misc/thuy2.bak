@@ -1,0 +1,8 @@
+var  s: string;
+begin
+    writeln('Nhap chuoi s');
+    read(s);
+    s := upcase(s);
+    writeln(s);
+    readln;
+end.
