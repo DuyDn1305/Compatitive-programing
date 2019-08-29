@@ -39,34 +39,46 @@ double const pi = acos(-1);
 #define maxn 100005
 #define pll pair<ll, ll>
 
-struct node {
-    int val;
-    node *left, *right;
-};
 
-int a[maxn];
-int b[maxn];
-node * root[maxn*4];
+vector <int> num;
+int dp[20][100][100][2];
+int pow10[10];
 
-node * update(node * root, int l, int r, int k) {
-    if (k > r || k < l) return root;
-    int mid = (l+r)/2;
-    node * newroot = new node({root->val+1, nullptr, nullptr});
-    if (l < r) {
-        newroot->left = update(root->left, l, mid, k);
-        newroot->right = update(root->right, mid+1, r, k);
+int calc(int pos, int mod_sum, int mod_num, bool tight, int &k) {
+    if (pos == sz(num)) {
+        if (!mod_num && !mod_sum) return 1;
+        else return 0;
     }
-    return newroot;
+    if (dp[pos][mod_sum][mod_num][tight] != -1) return dp[pos][mod_sum][mod_num][tight];
+    int res = 0;
+    int lim = (tight) ? num[pos] : 9;
+    fto(i, 0, lim) {
+        int ans;
+        int mod = (i*pow10[sz(num)-1-pos]+mod_num)%k;
+        if (i == lim) ans = calc(pos+1, (mod_sum+i)%k, mod, tight, k);
+        else ans = calc(pos+1, (mod_sum+i)%k, mod, 0, k);
+        res += ans;
+    }
+    return dp[pos][mod_sum][mod_num][tight] = res;
 }
 
-int query(node * root1, node * root2, int l, int r, int k) {
-    if (l == r) return l;
-    int cnt = root2->left->val-root1->left->val;
-    int mid = (l+r)/2;
-    if (cnt >= k) {
-        return query(root1->left, root2->left, l, mid, k);
+int solve(int n, int k) {
+    if (n == 0) return 1;
+    if (k >= 100) return 1;
+    num.clear();
+    while (n) {
+        num.push_back(n%10);
+        n /= 10;
     }
-    return query(root1->right, root2->right, mid+1, r, k-cnt);
+    reverse(num.begin(), num.end());
+    fto(i, 0, 10) {
+        fto(j, 0, 99) {
+            fto(k, 0, 99) {
+                fto(l, 0, 1) dp[i][j][k][l] = -1;
+            }
+        }
+    }
+    return calc(0, 0, 0, 1, k);
 }
 
 int main() {
@@ -76,39 +88,17 @@ int main() {
 	#endif
 	ios_base::sync_with_stdio(false); cin.tie(0); cout.tie(0);
 
-    int n, q;
-    cin >> n >> q;
-    fto(i, 1, n) {
-        cin >> a[i];
-        b[i] = a[i];
-    }
-    sort(b+1, b+1+n);
+	int q;
+    cin >> q;
 
-    root[0] = new node();
-    root[0]->val = 0;
-    root[0]->left = root[0]->right = root[0];
+    pow10[0] = 1;
+    fto(i, 1, 9) pow10[i] = pow10[i-1]*10;
 
-    fto(i, 1, n) root[i] = update(root[i-1], 1, n, lower_bound(b+1, b+1+n, a[i])-b);
-
-    while (q--) {
-        int ql, qr, k;
-        cin >> ql >> qr >> k;
-        cout << b[query(root[ql-1], root[qr], 1, n, k)] << endl;
+    fto(i, 1, q) {
+        int a, b, k;
+        cin >> a >> b >> k;
+        cout << "Case " << i << ": " << solve(b, k)-solve(a-1, k) << endl;
     }
 
-    #ifdef KITTENS
-		cerr << 0.001*clock() << endl;
-	#endif
 	return 0;
 }
-
-Source code | Plain text | Copy to submit
-ads via Carbon
-Adobe Creative Cloud for Teams starting at $29.99 per month.
-ADS VIA CARBON
-
-About | Tutorial | Tools | Clusters | Credits | API | Widgets
-
-Legal: Terms of Service | Privacy Policy | GDPR Info
-
- RSS
