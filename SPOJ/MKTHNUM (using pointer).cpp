@@ -101,14 +101,3 @@ int main() {
 	#endif
 	return 0;
 }
-
-Source code | Plain text | Copy to submit
-ads via Carbon
-Adobe Creative Cloud for Teams starting at $29.99 per month.
-ADS VIA CARBON
-
-About | Tutorial | Tools | Clusters | Credits | API | Widgets
-
-Legal: Terms of Service | Privacy Policy | GDPR Info
-
- RSS
