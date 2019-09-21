@@ -2,11 +2,12 @@
 
 using namespace std;
 
-#define fto(i, s, e) for (int i = (s); i <= (e); ++i)
-#define fto1(i, s, e) for (int i = (s); i < (e); ++i)
-#define fdto(i, s, e) for (int i = (s); i >= (e); --i)
-#define fit(var, it) for (auto it = (var).begin(); it != (var).end(); ++it)
-#define frit(var, it) for (auto it = (var).rbegin(); it != (var).rend(); ++it)
+#define fto(i, s, e) for(int i = (s); i <= (e); ++i)
+#define fto1(i, s, e) for(int i = (s); i < (e); ++i)
+#define fdto(i, s, e) for(int i = (s); i >= (e); --i)
+#define forit(it, l, r) for(auto it = (l); it != (r); ++it)
+#define fit(it, var) forit(it, (var).begin(), (var).end())
+#define frit(it, var) forit(it, (var).rbegin(), (var).rend())
 
 #define endl '\n'
 #define bug1(x, i) cout << #x << '[' << i << "] = " << x[i] << endl
@@ -29,56 +30,36 @@ template<class T1, class T2> ostream& operator<< (ostream &os, pair<T1, T2> cons
 	return os << '(' << v.x << ", " << v.y << ')';
 }
 
-char* sfm(const char *fmt, ...) {
-	static char res[256];va_list args;va_start(args, fmt);vsnprintf(res, 256, fmt, args);va_end(args);return res;
-}
-
 double const pi = acos(-1);
 #define oo 1000000007
 #define OO 1000000000000000003LL
-#define maxn 100005
-#define pll pair<ll, ll>
 
+struct trie {
+	bool eow;
+	int child[26];
+	trie() {
+		eow = 0;
+		fto(i, 0, 25) child[i] = -1;
+	}
+};
 
-vector <int> num;
-int dp[20][100][100][2];
-int pow10[10];
+vector <trie> a(1);
+int f[5]
 
-int calc(int pos, int mod_sum, int mod_num, bool tight, int &k) {
-    if (pos == sz(num)) {
-        if (!mod_num && !mod_sum) return 1;
-        else return 0;
-    }
-    if (dp[pos][mod_sum][mod_num][tight] != -1) return dp[pos][mod_sum][mod_num][tight];
-    int res = 0;
-    int lim = (tight) ? num[pos] : 9;
-    fto(i, 0, lim) {
-        int ans;
-        int mod = (i*pow10[sz(num)-1-pos]+mod_num)%k;
-        if (i == lim) ans = calc(pos+1, (mod_sum+i)%k, mod, tight, k);
-        else ans = calc(pos+1, (mod_sum+i)%k, mod, 0, k);
-        res += ans;
-    }
-    return dp[pos][mod_sum][mod_num][tight] = res;
-}
-
-int solve(int n, int k) {
-    if (n == 0) return 1;
-    if (k >= 100) return 1;
-    num.clear();
-    while (n) {
-        num.push_back(n%10);
-        n /= 10;
-    }
-    reverse(num.begin(), num.end());
-    fto(i, 0, 10) {
-        fto(j, 0, 99) {
-            fto(k, 0, 99) {
-                fto(l, 0, 1) dp[i][j][k][l] = -1;
-            }
-        }
-    }
-    return calc(0, 0, 0, 1, k);
+void add(string &x) {
+	int root = 0;
+	fto1(i, 0, sz(x)) {
+		int c = x[i]-'a';
+		trie node = a[root];
+		if (node.child[c] != -1) {
+			root = node.child[c];
+		}
+		else {
+			root = node.child[c] = sz(a);
+			a.pb(trie());
+		}
+	}
+	a[root].eow = 1;
 }
 
 int main() {
@@ -88,14 +69,27 @@ int main() {
 	#endif
 	ios_base::sync_with_stdio(false); cin.tie(0); cout.tie(0);
 
-	int q;
-    cin >> q;
+	int n;
+	string s;
+	cin >> s;
+	n = sz(s);
+	s = "@"+s;
+	cin >> n;
+	while (n--) {
+		string x;
+		cin >> x;
+		add(x);
+	}
 
-    cout << 5;
-    
+	f[0] = 1;
+	fto(i, 1, n) {
+
+	}
+
+	cout << f[n] << endl;
+
     #ifdef KITTENS
 		cerr << 0.001*clock() << endl;
 	#endif
-
 	return 0;
 }
