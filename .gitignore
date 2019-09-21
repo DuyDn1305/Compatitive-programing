@@ -1,8 +1,4 @@
-*.inp
-
-*.out
-
 *.exe
-*.o
-*.txt
-*.vscode
+main*
+.*
+debug.cpp
