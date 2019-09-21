@@ -44,7 +44,7 @@ struct trie {
 };
 
 vector <trie> a(1);
-int f[int(3e5+5)];
+int f[int(3e5+6)];
 
 void add(string &x) {
 	int root = 0;
