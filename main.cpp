@@ -86,7 +86,6 @@ int main() {
 
 	}
 
-	cout << f[n] << endl;
 
     #ifdef KITTENS
 		cerr << 0.001*clock() << endl;
