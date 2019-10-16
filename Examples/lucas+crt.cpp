@@ -40,35 +40,55 @@ double const pi = acos(-1);
 #define oo 1000000007
 #define OO 1000000000000000003LL
 
-vector<ll> f;
-ii a[100005];
+ll fac[100];
+
+ll power(ll x, ll y, ll mod) {
+	ll res = 1;
+	while (y) {
+		if (y%2) res = res*x%mod;
+		x = x*x%mod;
+		y /= 2;
+	}
+	return res;
+}
+
+ll lucas(ll n, ll k, int p) {
+	fac[0] = 1;
+	fto (i, 1, p) fac[i] = fac[i-1]*i%p;
+	ll res = 1;
+	while (k) {
+		int x = n%p, y = k%p;
+		if (x < y) return 0LL;
+		res = res*fac[x]%p*power(fac[x-y], p-2, p)%p*power(fac[y], p-2, p)%p;
+		k /= p;
+		n /= p;
+	}
+	return res;
+}
 
 int main() {
 	#ifdef KITTENS
 		freopen("main.inp", "r", stdin);
 		freopen("main.out", "w", stdout);
 	#endif
+	ios_base::sync_with_stdio(false); cin.tie(0); cout.tie(0);
 
 	int test;
 	cin >> test;
 	while (test--) {
-		int n, q;
-		cin >> n;
-		fto (i, 1, n) cin >> a[i].x >> a[i].y;
-		f.clear();
-		f.pb(a[1].x+a[1].y);
-		fto (i, 2, n) f.pb(f.back()+a[i].x+a[i].y-a[i-1].x);
-		while(q--) {
-			ll k;
-			cin >> k;
-			auto p = lower_bound(all(f), k);
-			if (*p < *f.begin()) cout << 0 << " ";
-			cout << p-f.begin()+1 << " ";
+		int n, k, m;
+		cin >> n >> k >> m;
+		ll ans = 0;
+		ll tmp = m;
+		fto (i, 2, 50) if (tmp%i == 0) {
+			while (tmp%i == 0) tmp /= i;
+			//if (!(m-210)) bug("'day ne'",i);
+			ans += lucas(n, k, i)*(m/i)%m*power(m/i, i-2, i)%m;
+			ans %= m;
 		}
-		cout << endl;
+		bug(ans);
 	}
 
-	ios_base::sync_with_stdio(false); cin.tie(0); cout.tie(0);
 	#ifdef KITTENS
 		cerr << 0.001*clock() << endl;
 	#endif

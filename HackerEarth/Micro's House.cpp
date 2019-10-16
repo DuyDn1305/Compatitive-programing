@@ -1,9 +1,6 @@
 #include <bits/stdc++.h>
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
 
 using namespace std;
-using namespace __gnu_pbds;
 
 #define fto(i, s, e) for(int i = (s); i <= (e); ++i)
 #define fto1(i, s, e) for(int i = (s); i < (e); ++i)
@@ -33,44 +30,79 @@ template<class T1, class T2> ostream& operator<< (ostream &os, pair<T1, T2> cons
 	return os << '(' << v.x << ", " << v.y << ')';
 }
 
-template<class T> void bug(T const &v) { cout << v << endl; }
-template<class T, class... Args> void bug(T const &v, Args const&... args) { cout << v << ' '; bug(args...); }
-
 double const pi = acos(-1);
 #define oo 1000000007
 #define OO 1000000000000000003LL
 
-vector<ll> f;
-ii a[100005];
+struct trie {
+	int child[2];
+	trie() {
+		child[0] = child[1] = -1;
+	}
+};
+
+vector <trie> node;
+int n, m;
+int f[10005][25];
+int a[10005][25];
+
+void add(int x) {
+	int root = 0;
+	fdto(i, 26, 0) {
+		bool bit = onb(x, i);
+		if (node[root].child[bit] == -1) {
+			node[root].child[bit] = sz(node);
+			node.pb(trie());
+		}
+		root = node[root].child[bit]; 
+	}
+}
+
+int get(int x) {
+	int root = 0, res = 0;
+	fdto(i, 26, 0) {
+		bool bit = onb(x, i)^1;
+		if (node[root].child[bit] == -1) bit ^= 1;
+		else res |= 1<<i;
+		root = node[root].child[bit];
+	}
+	return res;
+}
 
 int main() {
 	#ifdef KITTENS
 		freopen("main.inp", "r", stdin);
 		freopen("main.out", "w", stdout);
 	#endif
-
-	int test;
-	cin >> test;
-	while (test--) {
-		int n, q;
-		cin >> n;
-		fto (i, 1, n) cin >> a[i].x >> a[i].y;
-		f.clear();
-		f.pb(a[1].x+a[1].y);
-		fto (i, 2, n) f.pb(f.back()+a[i].x+a[i].y-a[i-1].x);
-		while(q--) {
-			ll k;
-			cin >> k;
-			auto p = lower_bound(all(f), k);
-			if (*p < *f.begin()) cout << 0 << " ";
-			cout << p-f.begin()+1 << " ";
+	ios_base::sync_with_stdio(false); cin.tie(0); cout.tie(0);
+	
+	cin >> n >> m;
+	fto(i, 1, n) {
+		fto(j, 1, m) {
+			cin >> a[i][j];
+			f[i][j] = f[i][j-1]^a[i][j];
 		}
-		cout << endl;
 	}
 
-	ios_base::sync_with_stdio(false); cin.tie(0); cout.tie(0);
+	int ans = 0;
+	fto(l, 1, m) {
+		fto(r, l, m) {
+			node.clear();
+			node.pb(trie());
+			add(0);
+			int cur = 0;
+ 			fto(i, 1, n) {
+				cur ^= f[i][r]^f[i][l-1];
+				ans = max(ans, get(cur));
+				add(cur);
+			}
+		}
+	}
+	cout << ans << endl;
+
 	#ifdef KITTENS
 		cerr << 0.001*clock() << endl;
 	#endif
 	return 0;
 }
+

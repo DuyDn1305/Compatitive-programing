@@ -40,35 +40,60 @@ double const pi = acos(-1);
 #define oo 1000000007
 #define OO 1000000000000000003LL
 
-vector<ll> f;
-ii a[100005];
+string a, b, ans, tmp;
+map<string, bool> s; 
+bool found;
+int n, m;
+
+void gen(int n, int k) {
+	if (k == n) {
+		if (!s.count(tmp)) {
+			ans = tmp;
+			found = 1;
+		}
+	} else {
+		fto (i, '0', '1') {
+			tmp[k] = i;
+			gen(n, k+1);
+			if (found) return;
+		}
+	}
+}
+
+bool check(int k) {
+	s.clear();
+	fto (i, 0, sz(a)-k) s[a.substr(i, k)] = 1;
+	fto (i, 0, sz(b)-k) s[b.substr(i, k)] = 1;
+	
+	tmp = "";
+	found = 0;
+	while (sz(tmp) < k) tmp += '0';
+	gen(k, 0);
+	return found;
+}
 
 int main() {
 	#ifdef KITTENS
 		freopen("main.inp", "r", stdin);
 		freopen("main.out", "w", stdout);
 	#endif
+	ios_base::sync_with_stdio(false); cin.tie(0); cout.tie(0);
 
-	int test;
-	cin >> test;
-	while (test--) {
-		int n, q;
-		cin >> n;
-		fto (i, 1, n) cin >> a[i].x >> a[i].y;
-		f.clear();
-		f.pb(a[1].x+a[1].y);
-		fto (i, 2, n) f.pb(f.back()+a[i].x+a[i].y-a[i-1].x);
-		while(q--) {
-			ll k;
-			cin >> k;
-			auto p = lower_bound(all(f), k);
-			if (*p < *f.begin()) cout << 0 << " ";
-			cout << p-f.begin()+1 << " ";
-		}
-		cout << endl;
+	cin >> a >> b;
+	n = sz(a);
+	m = sz(b);
+	
+	int l = 1;
+	int r = max(n, m)+1;
+
+	while (l <= r) {
+		int mid = (l+r)/2;
+		if (check(mid)) r = mid-1;
+		else l = mid+1;
 	}
 
-	ios_base::sync_with_stdio(false); cin.tie(0); cout.tie(0);
+	bug(ans);
+	
 	#ifdef KITTENS
 		cerr << 0.001*clock() << endl;
 	#endif

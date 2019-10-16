@@ -1,9 +1,6 @@
 #include <bits/stdc++.h>
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
 
 using namespace std;
-using namespace __gnu_pbds;
 
 #define fto(i, s, e) for(int i = (s); i <= (e); ++i)
 #define fto1(i, s, e) for(int i = (s); i < (e); ++i)
@@ -18,7 +15,7 @@ using namespace __gnu_pbds;
 #define bug3(x, i, j, k) cout << #x << '[' << i << "][" << j << "][" << k << "] = " << x[i][j][k] << endl
 
 #define bc __builtin_popcountll
-#define onb(x, bit) ((x & (1 << bit)) != 0)
+#define onb(x, bit) (x & (1 << bit))
 #define gcd __gcd
 #define y1 ansdj
 
@@ -33,43 +30,87 @@ template<class T1, class T2> ostream& operator<< (ostream &os, pair<T1, T2> cons
 	return os << '(' << v.x << ", " << v.y << ')';
 }
 
-template<class T> void bug(T const &v) { cout << v << endl; }
-template<class T, class... Args> void bug(T const &v, Args const&... args) { cout << v << ' '; bug(args...); }
-
 double const pi = acos(-1);
 #define oo 1000000007
 #define OO 1000000000000000003LL
 
-vector<ll> f;
-ii a[100005];
+struct trie {
+	int child[2];
+	int eow;
+	trie() {
+		eow = 0;
+		child[0] = child[1] = -1;
+	}
+};
+
+int f[500005];
+vector <trie> a(1);
+
+void add(bool b[], int &k) {
+	int root = 0;
+	fto1(i, 0, k) {
+		if (a[root].child[b[i]] == -1) {
+			root = a[root].child[b[i]] = sz(a);
+			a.pb(trie());
+		}
+		else {
+			root = a[root].child[b[i]];
+		}
+	}
+	++a[root].eow;
+}
+
+void calc(int u) {
+	int res = a[u].eow;
+	fto(tmp, 0, 1) {
+		int v = a[u].child[tmp];
+		if (v != -1) {
+			calc(v);
+			res += f[v];
+		}
+	}
+	f[u] = res;
+}
 
 int main() {
 	#ifdef KITTENS
 		freopen("main.inp", "r", stdin);
 		freopen("main.out", "w", stdout);
 	#endif
+	ios_base::sync_with_stdio(false); cin.tie(0); cout.tie(0);
 
-	int test;
-	cin >> test;
-	while (test--) {
-		int n, q;
-		cin >> n;
-		fto (i, 1, n) cin >> a[i].x >> a[i].y;
-		f.clear();
-		f.pb(a[1].x+a[1].y);
-		fto (i, 2, n) f.pb(f.back()+a[i].x+a[i].y-a[i-1].x);
-		while(q--) {
-			ll k;
-			cin >> k;
-			auto p = lower_bound(all(f), k);
-			if (*p < *f.begin()) cout << 0 << " ";
-			cout << p-f.begin()+1 << " ";
+	int n, m;
+	cin >> n >> m;
+	fto(i, 1, n) {
+		int k;
+		cin >> k;
+		bool bits[k];
+		fto1(j, 0, k) cin >> bits[j];
+		add(bits, k);
+	}
+	calc(0);
+	fto(i, 1, m) {
+		int k;
+		cin >> k;
+		bool bits[k];
+		fto1(j, 0, k) cin >> bits[j];
+		int root = 0;
+		int ans = 0;
+		fto1(j, 0, k) {
+			int newRoot = a[root].child[bits[j]];
+			if (newRoot != -1) {
+				root = newRoot;
+				ans += a[root].eow;
+				if (j == k-1) ans += f[root]-a[root].eow;
+			}
+			else {
+				break;
+			}
 		}
-		cout << endl;
+		cout << ans << endl;
 	}
 
-	ios_base::sync_with_stdio(false); cin.tie(0); cout.tie(0);
-	#ifdef KITTENS
+    #ifdef KITTENS
 		cerr << 0.001*clock() << endl;
 	#endif
 	return 0;

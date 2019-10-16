@@ -1,9 +1,6 @@
 #include <bits/stdc++.h>
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
 
 using namespace std;
-using namespace __gnu_pbds;
 
 #define fto(i, s, e) for(int i = (s); i <= (e); ++i)
 #define fto1(i, s, e) for(int i = (s); i < (e); ++i)
@@ -33,44 +30,69 @@ template<class T1, class T2> ostream& operator<< (ostream &os, pair<T1, T2> cons
 	return os << '(' << v.x << ", " << v.y << ')';
 }
 
-template<class T> void bug(T const &v) { cout << v << endl; }
-template<class T, class... Args> void bug(T const &v, Args const&... args) { cout << v << ' '; bug(args...); }
-
 double const pi = acos(-1);
 #define oo 1000000007
 #define OO 1000000000000000003LL
 
-vector<ll> f;
-ii a[100005];
+int a[5][5];
+
+void rotate() {
+	int res[5][5];
+	fto(i, 1, 4) {
+		fto(j, 1, 4) {
+			res[i][j] = a[j][4-i+1];
+		}
+	}
+	fto(i, 1, 4) fto(j, 1, 4) a[i][j] = res[i][j];
+	return;
+}
 
 int main() {
 	#ifdef KITTENS
 		freopen("main.inp", "r", stdin);
 		freopen("main.out", "w", stdout);
 	#endif
+	ios_base::sync_with_stdio(false); cin.tie(0); cout.tie(0);
+	int type;
 
-	int test;
-	cin >> test;
-	while (test--) {
-		int n, q;
-		cin >> n;
-		fto (i, 1, n) cin >> a[i].x >> a[i].y;
-		f.clear();
-		f.pb(a[1].x+a[1].y);
-		fto (i, 2, n) f.pb(f.back()+a[i].x+a[i].y-a[i-1].x);
-		while(q--) {
-			ll k;
-			cin >> k;
-			auto p = lower_bound(all(f), k);
-			if (*p < *f.begin()) cout << 0 << " ";
-			cout << p-f.begin()+1 << " ";
+	fto(i, 1, 4) fto(j, 1, 4) cin >> a[i][j];
+	cin >> type;
+
+	vector <int> res[5];
+
+	fto(i, 1, type) rotate();
+
+	fto(i, 1, 4) {
+		fto(j, 1, 4) {
+			if (!a[i][j]) continue;
+			res[i].pb(a[i][j]);
+			fto(k, j+1, 4) if (a[i][k]) {
+				if (a[i][j] == a[i][k]) {
+					res[i].back() *= 2;
+					j = k;
+				} else j = k-1;
+				break;
+			}
 		}
+		res[i].resize(4, 0);
+	}
+
+	fto(i, 1, 4) fto(j, 1, 4) a[i][j] = res[i][j-1];
+
+	if (type) fto1(i, type, 4) {
+		rotate();
+	}
+
+	fto(i, 1, 4) {
+		fto(j, 1, 4) cout << a[i][j] << " ";
 		cout << endl;
 	}
 
-	ios_base::sync_with_stdio(false); cin.tie(0); cout.tie(0);
+	
 	#ifdef KITTENS
 		cerr << 0.001*clock() << endl;
 	#endif
 	return 0;
 }
+
+

@@ -1,9 +1,6 @@
 #include <bits/stdc++.h>
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
 
 using namespace std;
-using namespace __gnu_pbds;
 
 #define fto(i, s, e) for(int i = (s); i <= (e); ++i)
 #define fto1(i, s, e) for(int i = (s); i < (e); ++i)
@@ -40,35 +37,64 @@ double const pi = acos(-1);
 #define oo 1000000007
 #define OO 1000000000000000003LL
 
-vector<ll> f;
-ii a[100005];
+int n, m;
+int a[200005];
+ll ans[200005];
+pair<ii, int> q[200005];
+ll f[1000005];
+ll res = 0;
+
+void add(int x) {
+	res -= f[x]*f[x]*x;
+	++f[x];
+	res += f[x]*f[x]*x;
+	return;
+}
+
+void remove(int x) {
+	res -= f[x]*f[x]*x;
+	--f[x];
+	res += f[x]*f[x]*x;
+	return;
+}
 
 int main() {
 	#ifdef KITTENS
 		freopen("main.inp", "r", stdin);
 		freopen("main.out", "w", stdout);
 	#endif
+	ios_base::sync_with_stdio(false); cin.tie(0); cout.tie(0);
 
-	int test;
-	cin >> test;
-	while (test--) {
-		int n, q;
-		cin >> n;
-		fto (i, 1, n) cin >> a[i].x >> a[i].y;
-		f.clear();
-		f.pb(a[1].x+a[1].y);
-		fto (i, 2, n) f.pb(f.back()+a[i].x+a[i].y-a[i-1].x);
-		while(q--) {
-			ll k;
-			cin >> k;
-			auto p = lower_bound(all(f), k);
-			if (*p < *f.begin()) cout << 0 << " ";
-			cout << p-f.begin()+1 << " ";
-		}
-		cout << endl;
+	cin >> n >> m;
+	int block = sqrt(n);
+	fto (i, 1, n) cin >> a[i];
+	fto (i, 1, m) {
+		cin >> q[i].x.x >> q[i].x.y;
+		q[i].y = i;
 	}
 
-	ios_base::sync_with_stdio(false); cin.tie(0); cout.tie(0);
+	sort(q+1, q+1+m, [&](auto &l, auto &r) {
+		if (l.x.x/block == r.x.x/block) {
+			return ((l.x.x/block)%2 == 0) ? l.x.y < r.x.y : r.x.y < l.x.y;
+		}
+		return l.x.x < r.x.x;
+	});
+	int curL, curR;
+	curL = curR = 0;
+
+	fto (i, 1, m) {
+		int l = q[i].x.x;
+		int r = q[i].x.y;
+		int id = q[i].y;
+		while (curR < r) add(a[++curR]);
+		while (curL < l) remove(a[curL++]);
+		while (curL > l) add(a[--curL]);
+		while (curR > r) remove(a[curR--]);
+		ans[id] = res;
+	}
+
+	fto (i, 1, m) cout << ans[i] << endl;
+
 	#ifdef KITTENS
 		cerr << 0.001*clock() << endl;
 	#endif
